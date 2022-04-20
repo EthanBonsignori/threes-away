@@ -1,0 +1,16 @@
+{
+  "name": "threes-away-game",
+  "version": "1.0.0",
+  "description": "monorepo for threes-away-game",
+  "main": "src/index.tsx",
+  "author": "Ethan Bonsignori",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^7.1.0"
+  },
+  "scripts": {
+    "start": "concurrently \"yarn client\" \"yarn server\"",
+    "client": "cd client && yarn start",
+    "server": "FLASK_APP=server flask run"
+  }
+}
