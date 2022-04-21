@@ -20,6 +20,8 @@ const App: FC = () => {
   const [dice, setDice] = useState<Die[]>(initialDice);
   const [frozenDice, setFrozenDice] = useState<Die[]>([]);
   const [score, setScore] = useState<number>(0);
+  const [round, setRound] = useState<number>(1);
+  const [gameState, setGameState] = useState<null>(null);
 
   useEffect(() => {
     let dieScore = 0;
@@ -43,8 +45,10 @@ const App: FC = () => {
   };
 
   return (
-    <div className="App">
-      <header className="App-header">Threes Away</header>
+    <AppContainer>
+      <Nav>
+        <Header>Threes Away</Header>
+      </Nav>
       <FlexWrapper>
         <DieWrapper>
           <DieTotal>{score}</DieTotal>
@@ -54,14 +58,31 @@ const App: FC = () => {
           <RollButton onClick={onClickRoll}>Roll</RollButton>
         </DieWrapper>
       </FlexWrapper>
-    </div>
+    </AppContainer>
   );
 };
 
-const FlexWrapper = styled.div`
-  display: flex;
+const AppContainer = styled.div`
   width: 100vw;
   height: 100vh;
+`;
+
+const Nav = styled.nav`
+  padding: 2em;
+  background-color: grey;
+  display: flex;
+  justify-content: center;
+`;
+
+const Header = styled.header`
+  font-size: 2em;
+  color: white;
+`;
+
+const FlexWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  height: 80%;
   place-items: center;
   justify-content: center;
 `;
