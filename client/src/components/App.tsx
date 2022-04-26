@@ -1,48 +1,40 @@
-import { FC, useEffect, useState } from "react";
+import { useReducer } from "react";
 import styled from "styled-components";
+import {
+  DiceActionTypes,
+  Die,
+  dieReducer,
+  DieStatus,
+  initialState,
+} from "../reducers/diceReducer";
 
-type Die = {
-  id: number;
-  roll: number;
-};
+const App = () => {
+  const [state, dispatch] = useReducer(dieReducer, initialState);
+  const { die1, die2, die3, die4, die5 } = state.dice;
 
-const rollD6 = () => Math.floor(Math.random() * 6) + 1;
+  const onClickDie = (die: Die) => {
+    if (die.value === 3) {
+      return;
+    }
 
-const initialDice = [
-  { id: 0, roll: rollD6() },
-  { id: 1, roll: rollD6() },
-  { id: 2, roll: rollD6() },
-  { id: 3, roll: rollD6() },
-  { id: 4, roll: rollD6() },
-];
-
-const App: FC = () => {
-  const [dice, setDice] = useState<Die[]>(initialDice);
-  const [frozenDice, setFrozenDice] = useState<Die[]>([]);
-  const [score, setScore] = useState<number>(0);
-  const [round, setRound] = useState<number>(1);
-  const [gameState, setGameState] = useState<null>(null);
-
-  useEffect(() => {
-    let dieScore = 0;
-    let dieToFreeze: Die[] = [];
-    dice.forEach((die) => {
-      if (die.roll !== 3) {
-        dieScore += die.roll;
-      } else {
-        dieToFreeze.push(die);
-      }
-    });
-    setScore(dieScore);
-    setFrozenDice(dieToFreeze);
-  }, [dice]);
-
-  const onClickRoll = () => {
-    const availableDice = dice
-      .filter((die) => !frozenDice.some((frozenDie) => frozenDie.id === die.id))
-      .map((die) => ({ ...die, roll: rollD6() }));
-    setDice([...frozenDice, ...availableDice]);
+    switch (die.status) {
+      case DieStatus.THAWED:
+        return dispatch({
+          type: DiceActionTypes.CHILL_ONE,
+          dieKey: die.id,
+        });
+      case DieStatus.CHILLED:
+        return dispatch({
+          type: DiceActionTypes.THAW_ONE,
+          dieKey: die.id,
+        });
+      case DieStatus.FROZEN:
+      default:
+        return;
+    }
   };
+
+  const onClickRoll = () => dispatch({ type: DiceActionTypes.ROLL_ALL });
 
   return (
     <AppContainer>
@@ -51,10 +43,44 @@ const App: FC = () => {
       </Nav>
       <FlexWrapper>
         <DieWrapper>
-          <DieTotal>{score}</DieTotal>
-          {dice.map((die: Die) => (
-            <DieElement key={die.id}>{die.roll}</DieElement>
-          ))}
+          <DieTotal>
+            {die1.value + die2.value + die3.value + die4.value + die5.value}
+          </DieTotal>
+          <DieElement
+            key={die1.id}
+            status={die1.status}
+            onClick={() => onClickDie(die1)}
+          >
+            {die1.value}
+          </DieElement>
+          <DieElement
+            key={die2.id}
+            status={die2.status}
+            onClick={() => onClickDie(die2)}
+          >
+            {die2.value}
+          </DieElement>
+          <DieElement
+            key={die3.id}
+            status={die3.status}
+            onClick={() => onClickDie(die3)}
+          >
+            {die3.value}
+          </DieElement>
+          <DieElement
+            key={die4.id}
+            status={die4.status}
+            onClick={() => onClickDie(die4)}
+          >
+            {die4.value}
+          </DieElement>
+          <DieElement
+            key={die5.id}
+            status={die5.status}
+            onClick={() => onClickDie(die5)}
+          >
+            {die5.value}
+          </DieElement>
           <RollButton onClick={onClickRoll}>Roll</RollButton>
         </DieWrapper>
       </FlexWrapper>
@@ -93,10 +119,24 @@ const DieWrapper = styled.div`
   gap: 10px;
 `;
 
-const DieElement = styled.div`
+interface DieElementProps {
+  status: DieStatus;
+}
+
+const DieElement = styled.div<DieElementProps>`
   width: 100px;
   height: 100px;
-  background: red;
+  background: ${(props) => {
+    switch (props.status) {
+      case DieStatus.FROZEN:
+        return "aqua";
+      case DieStatus.CHILLED:
+        return "orange";
+      case DieStatus.THAWED:
+      default:
+        return "red";
+    }
+  }};
   color: white;
   font-size: 2em;
   display: grid;
