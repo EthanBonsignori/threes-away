@@ -1,104 +1,88 @@
 import { Reducer } from "react";
+import { rollThreesAwayD6 } from "../helpers/gameUtils";
+import { Dice, Die, DieKey, DieStatus, DieValue } from "./Dice/types";
 
-export enum DieStatus {
-  /**
-   * Ready to roll
-   */
-  THAWED = "THAWED",
-  /**
-   * Frozen this round via click and can be thawed
-   */
-  CHILLED = "CHILLED",
-  /**
-   * Frozen in a previous round or a 3 and cannot be thawed
-   */
-  FROZEN = "FROZEN",
+interface GameState {
+  dice: Dice
 }
 
-export enum DieKey {
-  ONE = "die1",
-  TWO = "die2",
-  THREE = "die3",
-  FOUR = "die4",
-  FIVE = "die5",
-}
-
-export interface Die {
-  id: DieKey;
-  value: 1 | 2 | 3 | 4 | 5 | 6;
-  status: DieStatus;
-}
-
-export type InitialDiceState = { dice: Record<string, Die> };
-
-export const initialState: InitialDiceState = {
+export const initialState: GameState = {
   dice: {
     die1: {
       id: DieKey.ONE,
-      value: 1,
+      value: rollThreesAwayD6(),
       status: DieStatus.THAWED,
     },
     die2: {
       id: DieKey.TWO,
-      value: 1,
+      value: rollThreesAwayD6(),
       status: DieStatus.THAWED,
     },
     die3: {
       id: DieKey.THREE,
-      value: 1,
+      value: rollThreesAwayD6(),
       status: DieStatus.THAWED,
     },
     die4: {
       id: DieKey.FOUR,
-      value: 1,
+      value: rollThreesAwayD6(),
       status: DieStatus.THAWED,
     },
     die5: {
       id: DieKey.FIVE,
-      value: 1,
+      value: rollThreesAwayD6(),
       status: DieStatus.THAWED,
     },
   },
-};
+}
+
+interface DiceAction {
+  type: DiceActionTypes;
+  dieKey?: DieKey;
+}
 
 export enum DiceActionTypes {
   ROLL_ONE = "ROLL_ONE",
   THAW_ONE = "THAW_ONE",
   CHILL_ONE = "CHILL_ONE",
-  FREEZE_ONE = "FREEZE_ONE",
-  ROLL_ALL = "ROLL_ALL",
+  FREEZE_ONE = "FREEZE_ONE", ROLL_ALL = "ROLL_ALL",
   THAW_ALL = "THAW_ALL",
 }
 
-export interface DiceAction {
-  type: DiceActionTypes;
-  dieKey?: DieKey;
-}
-
-const rollD6 = () => (Math.floor(Math.random() * 6) + 1) as Die["value"];
-
-export const dieReducer: Reducer<InitialDiceState, DiceAction> = (
-  state,
+export const gameReducer: Reducer<GameState, DiceAction> = (
+  state = initialState,
   action
-) => {
-  const dieKey = action?.dieKey ?? "";
+): GameState => {
   const type = action.type;
-  let diceCopy = { ...state.dice };
-  let roll;
+  let diceCopy: GameState["dice"];
+  let dieKey: keyof Dice = "die1";
+  let roll: DieValue;
 
   switch (type) {
     case DiceActionTypes.ROLL_ONE:
+      if (action?.dieKey) {
+        dieKey = action.dieKey;
+      } else {
+        console.warn("Single die action fired without passing a DieKey");
+        return state;
+      }
       return {
         ...state,
         dice: {
           ...state.dice,
           [dieKey]: {
             ...state.dice[dieKey],
-            value: rollD6(),
+            value: rollThreesAwayD6(),
           },
         },
       };
     case DiceActionTypes.THAW_ONE:
+      if (action?.dieKey) {
+        dieKey = action.dieKey;
+      } else {
+        console.warn("Single die action fired without passing a DieKey");
+        return state;
+      }
       return {
         ...state,
         dice: {
@@ -110,6 +94,12 @@ export const dieReducer: Reducer<InitialDiceState, DiceAction> = (
         },
       };
     case DiceActionTypes.CHILL_ONE:
+      if (action?.dieKey) {
+        dieKey = action.dieKey;
+      } else {
+        console.warn("Single die action fired without passing a DieKey");
+        return state;
+      }
       return {
         ...state,
         dice: {
@@ -121,6 +111,12 @@ export const dieReducer: Reducer<InitialDiceState, DiceAction> = (
         },
       };
     case DiceActionTypes.FREEZE_ONE:
+      if (action?.dieKey) {
+        dieKey = action.dieKey;
+      } else {
+        console.warn("Single die action fired without passing a DieKey");
+        return state;
+      }
       return {
         ...state,
         dice: {
@@ -134,29 +130,29 @@ export const dieReducer: Reducer<InitialDiceState, DiceAction> = (
 
     case DiceActionTypes.ROLL_ALL:
       diceCopy = { ...state.dice };
-      Object.keys(diceCopy).forEach((key) => {
-        switch (diceCopy[key].status) {
+      for (dieKey in diceCopy) {
+        switch (diceCopy[dieKey].status) {
           case DieStatus.CHILLED:
-            diceCopy[key].status = DieStatus.FROZEN;
-            return;
+            diceCopy[dieKey].status = DieStatus.FROZEN;
+            break;
           case DieStatus.THAWED:
-            roll = rollD6();
-            if (roll === 3) {
-              diceCopy[key].status = DieStatus.FROZEN;
+            roll = rollThreesAwayD6();
+            if (roll === 0) {
+              diceCopy[dieKey].status = DieStatus.FROZEN;
             }
-            diceCopy[key].value = roll;
-            return;
+            diceCopy[dieKey].value = roll;
+            break;
           case DieStatus.FROZEN:
           default:
-            return;
+            break;
         }
-      });
+      }
       return { ...state, dice: { ...diceCopy } };
     case DiceActionTypes.THAW_ALL:
       diceCopy = { ...state.dice };
-      Object.keys(diceCopy).forEach((key) => {
-        diceCopy[key].status = DieStatus.THAWED;
-      });
+      for (dieKey in diceCopy) {
+        diceCopy[dieKey].status = DieStatus.THAWED;
+      }
       return { ...state, dice: { ...diceCopy } };
     default:
       return state;
