@@ -1,8 +1,6 @@
-export const DIE_VALUE_DICT = {
-  1: 1,
-  2: 2,
-  0: 3,
-  4: 4,
-  5: 5,
-  6: 6,
-};
+export const DIE_1 = "DIE_1"
+export const DIE_2 = "DIE_2"
+export const DIE_3 = "DIE_3"
+export const DIE_4 = "DIE_4"
+export const DIE_5 = "DIE_5"
+export const ALL_DICE = [DIE_1, DIE_2, DIE_3, DIE_4, DIE_5]
