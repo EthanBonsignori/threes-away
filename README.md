@@ -10,13 +10,26 @@ This is a monorepo that contains both the [Client](/client/) and [Server](/serve
 
 ### Things to be done
 
-- [ ] Roll dice and display the results
-- [ ] _Freeze_ **n** selected die and then allow user to roll (**5 - n**) die
-- [ ] Auto-freeze 3's (_optional rule?_)
-- [ ] User must freeze at least 1 die per roll
-- [ ] Save user's score at the end of their round
-- [ ] Rounds and game logic for 2+ players
-- [ ] Cont'd game logic for 2+ rounds
+- ~~Dice state logic~~
+
+  - [x] ~~Roll dice and display the results~~
+  - [x] ~~_Freeze_ **n** selected die and then allow user to roll (**5 - n**) die~~
+  - [x] ~~Auto-freeze 3's~~ (_optional rule?_)
+
+- Game state logic
+
+  - Rounds
+    - [ ] Must freeze 1 die (Auto frozen 3s count, can't be unfrozen)
+    - [ ] Save score each round
+    - [ ] Display this info to the user
+  - Players
+    - [ ] Multiple players logic (setup for sockets)
+    - [ ] Save user's score at the end of their round
+  - Game
+    - [ ] Winner
+    - [ ] Betting
+    - [ ] Settings
+
 - [ ] Hookup web sockets [(socket.io-client)](https://socket.io/docs/v4/client-initialization/)
 - [ ] Hookup server sockets [(Flask-SocketIO)](https://flask-socketio.readthedocs.io/en/latest/)
 - [ ] Deploy the thing
