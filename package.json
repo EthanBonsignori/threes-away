@@ -11,6 +11,7 @@
   "scripts": {
     "start": "concurrently \"yarn client\" \"yarn server\"",
     "client": "cd client && yarn start",
-    "server": "FLASK_APP=server flask run"
+    "server": "FLASK_APP=server flask run",
+    "venv": "source venv/bin/activate"
   }
 }
