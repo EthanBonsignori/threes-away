@@ -1,8 +1,10 @@
 import { Reducer } from "react"
 import { rollThreesAwayD6 } from "../../../helpers/gameUtils"
 import { ActionType, DiceActions } from "./actions"
-import { Dice as DiceState, Die, DieStatus } from "../types"
+import { Dice, Die, DieStatus } from "../types"
 import { DIE_1, DIE_2, DIE_3, DIE_4, DIE_5 } from "../../../helpers/constants"
+
+export type DiceState = Dice
 
 export const initialState: DiceState = {
   [DIE_1]: {
@@ -36,7 +38,7 @@ export const diceReducer: Reducer<DiceState, DiceActions> = (
   state = initialState,
   action,
 ): DiceState => {
-  let stateCopy: DiceState
+  let nextState: DiceState
 
   switch (action.type) {
     case ActionType.RollDie:
@@ -71,28 +73,25 @@ export const diceReducer: Reducer<DiceState, DiceActions> = (
           status: DieStatus.FROZEN,
         },
       }
-
     case ActionType.RollDice:
-      stateCopy = { ...state }
-      stateCopy[DIE_1] = rollByStatus(state[DIE_1])
-      stateCopy[DIE_2] = rollByStatus(state[DIE_2])
-      stateCopy[DIE_3] = rollByStatus(state[DIE_3])
-      stateCopy[DIE_4] = rollByStatus(state[DIE_4])
-      stateCopy[DIE_5] = rollByStatus(state[DIE_5])
-      return { ...state, ...stateCopy }
-
+      nextState = { ...state }
+      nextState[DIE_1] = rollByStatus(state[DIE_1])
+      nextState[DIE_2] = rollByStatus(state[DIE_2])
+      nextState[DIE_3] = rollByStatus(state[DIE_3])
+      nextState[DIE_4] = rollByStatus(state[DIE_4])
+      nextState[DIE_5] = rollByStatus(state[DIE_5])
+      return { ...state, ...nextState }
     case ActionType.ThawDice:
-      stateCopy = { ...state }
-      stateCopy[DIE_1].status = DieStatus.THAWED
-      stateCopy[DIE_2].status = DieStatus.THAWED
-      stateCopy[DIE_3].status = DieStatus.THAWED
-      stateCopy[DIE_4].status = DieStatus.THAWED
-      stateCopy[DIE_5].status = DieStatus.THAWED
-      return { ...state, ...stateCopy }
+      nextState = { ...state }
+      nextState[DIE_1].status = DieStatus.THAWED
+      nextState[DIE_2].status = DieStatus.THAWED
+      nextState[DIE_3].status = DieStatus.THAWED
+      nextState[DIE_4].status = DieStatus.THAWED
+      nextState[DIE_5].status = DieStatus.THAWED
+      return { ...state, ...nextState }
     default:
       return state
   }
-  return state
 }
 
 const rollByStatus = (die: Die) => {
