@@ -1,4 +1,4 @@
-import { Dice } from "../types"
+import { Dice } from "./Types__ThreesAway"
 
 export enum ActionType {
   ClickDie,

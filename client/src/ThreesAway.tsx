@@ -1,12 +1,12 @@
 import { FC, useContext } from "react"
 import styled from "styled-components"
-import DiceContext from "./state/context"
-import { chillDie, rollDice, thawDie } from "./state/actions"
-import { Die, DieStatus } from "./types"
+import DiceContext from "./Context__ThreesAway"
+import { chillDie, rollDice, thawDie } from "./Actions__ThreesAway"
+import { Die, DieStatus } from "./Types__ThreesAway"
 
 const Dice: FC = () => {
   const { state, dispatch } = useContext(DiceContext)
-  const { DIE_1, DIE_2, DIE_3, DIE_4, DIE_5 } = state
+  const { DIE_1, DIE_2, DIE_3, DIE_4, DIE_5 } = state.dice
 
   const onClick = (die: Die) => {
     // If roll is 3 (value of 0) it's already frozen

@@ -1,4 +1,5 @@
-import { DIE_1, DIE_2, DIE_3, DIE_4, DIE_5 } from "../../helpers/constants"
+import { ActionType as ThreesAwayActions } from "./Actions__ThreesAway"
+import { DIE_1, DIE_2, DIE_3, DIE_4, DIE_5 } from "./Utils__ThreesAway"
 
 /**
  * Value of die's roll (0-6 excluding 3)
@@ -41,4 +42,17 @@ export interface Dice {
   [DIE_3]: Die
   [DIE_4]: Die
   [DIE_5]: Die
+}
+
+export type RoundEvents = ThreesAwayActions
+
+export interface Round {
+  canRoll: boolean
+  events: RoundEvents[]
+  score: number | null
+}
+
+export interface GameState {
+  round: Round
+  dice: Dice
 }

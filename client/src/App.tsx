@@ -1,24 +1,25 @@
 import { useReducer } from "react"
 import styled from "styled-components"
 
-import Dice from "./Dice/Dice"
-import DiceContext from "./Dice/state/context"
+import ThreesAway from "./ThreesAway"
+import DiceContext from "./Context__ThreesAway"
 import {
-  diceReducer,
+  gameReducer,
   initialState as initialDiceState,
-} from "./Dice/state/reducer"
+} from "./Reducer__ThreesAway"
 
 const App = () => {
-  const [state, dispatch] = useReducer(diceReducer, initialDiceState)
+  const [diceState, diceDispatch] = useReducer(gameReducer, initialDiceState)
 
   return (
-    <DiceContext.Provider value={{ state, dispatch }}>
+    <DiceContext.Provider
+      value={{ state: { ...diceState }, dispatch: diceDispatch }}>
       <AppContainer>
         <Nav>
           <Header>Threes Away</Header>
         </Nav>
         <FlexWrapper>
-          <Dice />
+          <ThreesAway />
         </FlexWrapper>
       </AppContainer>
     </DiceContext.Provider>
